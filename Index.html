@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UGC Video Maker — Free AI Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f0f4ff;
+      --surface: #ffffff;
+      --surface2: #f7f9ff;
+      --border: #e2e8f7;
+      --blue: #4361ee;
+      --blue-light: #eef0ff;
+      --blue-dark: #2d46c7;
+      --green: #22c55e;
+      --green-light: #dcfce7;
+      --orange: #f97316;
+      --orange-light: #fff7ed;
+      --red: #ef4444;
+      --text: #1e2235;
+      --text2: #64748b;
+      --text3: #94a3b8;
+      --shadow: 0 2px 16px rgba(67,97,238,0.10);
+      --shadow-lg: 0 8px 40px rgba(67,97,238,0.15);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0 0 60px;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 1px 12px rgba(0,0,0,0.06);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--blue);
+    }
+
+    .logo-icon {
+      width: 34px; height: 34px;
+      background: var(--blue);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .free-badge {
+      background: var(--green-light);
+      color: var(--green);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* ── Setup banner ── */
+    .setup-banner {
+      background: linear-gradient(135deg, #4361ee 0%, #7c3aed 100%);
+      color: white;
+      padding: 24px;
+      margin: 24px auto;
+      max-width: 760px;
+      border-radius: 20px;
+      display: none;
+    }
+
+    .setup-banner.show { display: block; }
+
+    .setup-banner h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .setup-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .setup-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    .setup-num {
+      width: 26px; height: 26px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .setup-link {
+      color: #fde68a;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .api-input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .api-input-row input {
+      flex: 1;
+      padding: 11px 16px;
+      border-radius: 10px;
+      border: none;
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .save-key-btn {
+      background: white;
+      color: var(--blue-dark);
+      border: none;
+      padding: 11px 20px;
+      border-radius: 10px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .save-key-btn:hover { background: #e8f0fe; }
+
+    /* ── Main container ── */
+    .container {
+      max-width: 760px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .card + .card { margin-top: 16px; }
+
+    .card-header {
+      padding: 20px 24px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .step-circle {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--blue-light);
+      color: var(--blue);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-circle.done { background: var(--green-light); color: var(--green); }
+
+    .card-title {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--text);
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--text2);
+      margin-top: 2px;
+    }
+
+    .card-body { padding: 20px 24px 24px; }
+
+    /* ── Upload ── */
+    .upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      background: var(--surface2);
+      padding: 36px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .upload-area:hover {
+      border-color: var(--blue);
+      background: var(--blue-light);
+    }
+
+    .upload-area.has-file {
+      border-style: solid;
+      border-color: var(--blue);
+      padding: 12px;
+    }
+
+    .upload-area.dragover {
+      border-color: var(--blue);
+      background: var(--blue-light);
+      transform: scale(0.99);
+    }
+
+    .upload-area img {
+      width: 100%;
+      max-height: 220px;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+
+    .upload-placeholder { pointer-events: none; }
+
+    .upload-icon-wrap {
+      width: 56px; height: 56px;
+      background: var(--blue-light);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+      color: var(--blue);
+    }
+
+    .upload-title {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .upload-hint {
+      font-size: 13px;
+      color: var(--text3);
+    }
+
+    .change-image-btn {
+      margin-top: 10px;
+      display: inline-block;
+      font-size: 13px;
+      color: var(--blue);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    #fileInput { display: none; }
+
+    /* ── Form fields ── */
+    .field { margin-bottom: 16px; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .field label span {
+      font-weight: 400;
+      color: var(--text3);
+    }
+
+    .field-hint {
+      font-size: 12px;
+      color: var(--text3);
+      margin-top: 5px;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--surface);
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus { border-color: var(--blue); }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* ── Tips chip ── */
+    .tips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 8px;
+    }
+
+    .tip-chip {
+      font-size: 12px;
+      color: var(--blue);
+      background: var(--blue-light);
+      padding: 4px 11px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+      font-weight: 500;
+    }
+
+    .tip-chip:hover { border-color: var(--blue); }
+
+    /* ── Generate button ── */
+    .generate-btn {
+      width: 100%;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .generate-btn:hover:not(:disabled) {
+      background: var(--blue-dark);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .generate-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── Status card ── */
+    .status-card {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+      text-align: center;
+      margin-top: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .status-card.show { display: block; }
+
+    .spinner {
+      width: 52px; height: 52px;
+      border: 3px solid var(--border);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 18px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .status-title {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .status-msg {
+      font-size: 14px;
+      color: var(--text2);
+      margin-bottom: 20px;
+    }
+
+    .progress-bar-track {
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue), #7c3aed);
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.6s ease;
+    }
+
+    .progress-label {
+      font-size: 12px;
+      color: var(--text3);
+    }
+
+    /* ── Result card ── */
+    .result-card {
+      display: none;
+      background: var(--surface);
+      border: 2px solid var(--green);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 16px;
+      box-shadow: 0 4px 24px rgba(34,197,94,0.12);
+    }
+
+    .result-card.show { display: block; animation: popIn 0.4s ease; }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.97); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .result-header {
+      background: var(--green-light);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .result-header-text {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      color: #166534;
+    }
+
+    .result-body { padding: 20px 24px; }
+
+    .video-wrap {
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    video { width: 100%; display: block; max-height: 420px; }
+
+    .result-actions { display: flex; gap: 10px; }
+
+    .download-btn {
+      flex: 1;
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .download-btn:hover { background: #16a34a; }
+
+    .new-btn {
+      background: var(--surface2);
+      color: var(--text2);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .new-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* ── Error box ── */
+    .error-box {
+      display: none;
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      border-radius: 12px;
+      padding: 16px;
+      color: var(--red);
+      font-size: 14px;
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+    .error-box.show { display: block; }
+    .error-box strong { display: block; margin-bottom: 4px; font-weight: 700; }
+
+    /* ── API key indicator in header ── */
+    .key-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      color: var(--text2);
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .key-status:hover { border-color: var(--blue); color: var(--blue); }
+    .key-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
+    .key-dot.set { background: var(--green); }
+
+    /* ── Footer note ── */
+    .footer-note {
+      text-align: center;
+      font-size: 13px;
+      color: var(--text3);
+      margin-top: 32px;
+    }
+    .footer-note a { color: var(--blue); text-decoration: none; }
+
+    @media (max-width: 520px) {
+      .two-col { grid-template-columns: 1fr; }
+      .result-actions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5">
+        <polygon points="5 3 19 12 5 21 5 3"/>
+      </svg>
+    </div>
+    UGC Video Maker
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span class="free-badge">✨ 100% Free</span>
+    <div class="key-status" onclick="showSetup()" id="keyStatusBtn">
+      <div class="key-dot" id="keyDot"></div>
+      <span id="keyStatusText">Setup API Key</span>
+    </div>
+  </div>
+</header>
+
+<!-- Setup Banner -->
+<div class="setup-banner" id="setupBanner">
+  <h2>🔑 One-time free setup — takes 2 minutes</h2>
+  <div class="setup-steps">
+    <div class="setup-step">
+      <div class="setup-num">1</div>
+      <div>Go to <a class="setup-link" href="https://replicate.com/signin" target="_blank">replicate.com</a> and create a <strong>free account</strong> (no credit card needed)</div>
+    </div>
+    <div class="setup-step">
+      <div class="setup-num">2</div>
+      <div>Go to <a class="setup-link" href="https://replicate.com/account/api-tokens" target="_blank">replicate.com/account/api-tokens</a> and click <strong>"Create token"</strong></div>
+    </div>
+    <div class="setup-step">
+      <div class="setup-num">3</div>
+      <div>Copy your token and paste it below 👇</div>
+    </div>
+  </div>
+  <div class="api-input-row">
+    <input type="password" id="apiKeyInput" placeholder="r8_xxxxxxxxxxxxxxxxxxxx" autocomplete="off"/>
+    <button class="save-key-btn" onclick="saveApiKey()">Save Key ✓</button>
+  </div>
+</div>
+
+<!-- Main Container -->
+<div class="container">
+
+  <!-- Step 1: Product Image -->
+  <div class="card">
+    <div class="card-header">
+      <div class="step-circle" id="step1Circle">1</div>
+      <div>
+        <div class="card-title">Upload Your Product Image</div>
+        <div class="card-subtitle">Any photo of your product — JPG, PNG, WEBP</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+        <input type="file" id="fileInput" accept="image/*">
+        <div class="upload-placeholder" id="uploadPlaceholder">
+          <div class="upload-icon-wrap">
+            <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path d="M21 15l-5-5L5 21"/>
+            </svg>
+          </div>
+          <div class="upload-title">Click to upload product image</div>
+          <div class="upload-hint">or drag & drop here</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: Details -->
+  <div class="card">
+    <div class="card-header">
+      <div class="step-circle" id="step2Circle">2</div>
+      <div>
+        <div class="card-title">Tell Us About Your Product</div>
+        <div class="card-subtitle">Help the AI understand what to create</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="field">
+        <label>Product Name <span>(optional)</span></label>
+        <input type="text" id="productName" placeholder="e.g. GlowUp Face Serum, Nike Air Max, etc."/>
+      </div>
+
+      <div class="field">
+        <label>Who is this video for? <span>(your target audience)</span></label>
+        <textarea id="audience" placeholder="e.g. Women aged 25-35 who love skincare and wellness, active on Instagram"></textarea>
+        <div class="tips-row">
+          <div class="tip-chip" onclick="setAudience('Young women 18-28 interested in beauty and skincare')">💄 Beauty / Skincare</div>
+          <div class="tip-chip" onclick="setAudience('Fitness enthusiasts aged 20-35 who love working out and healthy living')">💪 Fitness lovers</div>
+          <div class="tip-chip" onclick="setAudience('Tech-savvy millennials 25-40 who enjoy gadgets and productivity tools')">📱 Tech enthusiasts</div>
+          <div class="tip-chip" onclick="setAudience('Parents of young children aged 0-8 looking for family products')">👶 Parents</div>
+          <div class="tip-chip" onclick="setAudience('Food lovers and home cooks who enjoy trying new recipes and kitchen products')">🍳 Food lovers</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="field">
+          <label>Platform</label>
+          <select id="platform">
+            <option value="TikTok">📱 TikTok</option>
+            <option value="Instagram Reels">📸 Instagram Reels</option>
+            <option value="Instagram Stories">💬 Instagram Stories</option>
+            <option value="YouTube Shorts">▶️ YouTube Shorts</option>
+            <option value="Facebook">👥 Facebook</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Aspect Ratio</label>
+          <select id="aspectRatio">
+            <option value="9:16 vertical portrait">9:16 — Vertical (TikTok/Reels)</option>
+            <option value="1:1 square">1:1 — Square</option>
+            <option value="16:9 horizontal landscape">16:9 — Horizontal (YouTube)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Video Vibe</label>
+        <select id="style">
+          <option value="authentic UGC style, handheld camera, natural lighting, real-person testimonial feel">🤳 Authentic & Real (UGC style)</option>
+          <option value="trendy, fast cuts, vibrant colors, high energy, viral style">⚡ High Energy & Trendy</option>
+          <option value="elegant, minimal, luxury aesthetic, slow reveal, cinematic">✨ Elegant & Luxury</option>
+          <option value="fun, playful, colorful, upbeat, casual lifestyle">🎉 Fun & Playful</option>
+          <option value="product close-up reveal, dramatic lighting, premium presentation">🎬 Cinematic Reveal</option>
+          <option value="before and after transformation, relatable problem-solution storytelling">🔄 Before & After</option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Step 3: Generate -->
+  <div class="card">
+    <div class="card-header">
+      <div class="step-circle" id="step3Circle">3</div>
+      <div>
+        <div class="card-title">Generate Your Video</div>
+        <div class="card-subtitle">Takes about 60–90 seconds using free AI</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:4px;">
+        🆓 Uses <strong>Replicate's free tier</strong> — no credit card, no hidden cost.<br>
+        The AI will generate a 5–10 second video based on your product and settings.
+      </p>
+      <button class="generate-btn" id="generateBtn" onclick="generate()">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        Generate My Video — Free
+      </button>
+
+      <div class="error-box" id="errorBox">
+        <strong>⚠️ Something went wrong</strong>
+        <span id="errorMsg"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status -->
+  <div class="status-card" id="statusCard">
+    <div class="spinner" id="spinner"></div>
+    <div class="status-title" id="statusTitle">Generating your video...</div>
+    <div class="status-msg" id="statusMsg">This usually takes 60–90 seconds. Please wait! ☕</div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">Starting up...</div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-card" id="resultCard">
+    <div class="result-header">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#166534" stroke-width="2.5">
+        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <span class="result-header-text">🎬 Your video is ready!</span>
+    </div>
+    <div class="result-body">
+      <div class="video-wrap">
+        <video id="outputVideo" controls playsinline></video>
+      </div>
+      <div class="result-actions">
+        <a class="download-btn" id="downloadBtn" href="#" download="ugc-video.mp4">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+          </svg>
+          Download Video (MP4)
+        </a>
+        <button class="new-btn" onclick="resetAll()">↺ New Video</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Built with <a href="https://replicate.com" target="_blank">Replicate</a> free AI · Open source on <a href="https://github.com" target="_blank">GitHub</a>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ─────────────────────────────────────────────
+//  UGC Video Maker — App Logic
+// ─────────────────────────────────────────────
+
+let uploadedImageBase64 = null;
+let isGenerating = false;
+
+// ── API Key Management ────────────────────────
+function loadApiKey() {
+  return localStorage.getItem('replicate_api_key') || '';
+}
+
+function saveApiKey() {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if (!val || !val.startsWith('r8_')) {
+    alert('Please enter a valid Replicate API token (starts with r8_)');
+    return;
+  }
+  localStorage.setItem('replicate_api_key', val);
+  updateKeyStatus(true);
+  document.getElementById('setupBanner').classList.remove('show');
+  document.getElementById('apiKeyInput').value = '';
+  showToast('✅ API key saved! You\'re all set.');
+}
+
+function updateKeyStatus(hasKey) {
+  const dot = document.getElementById('keyDot');
+  const text = document.getElementById('keyStatusText');
+  if (hasKey) {
+    dot.classList.add('set');
+    text.textContent = 'API Key ✓';
+  } else {
+    dot.classList.remove('set');
+    text.textContent = 'Setup API Key';
+  }
+}
+
+function showSetup() {
+  const banner = document.getElementById('setupBanner');
+  banner.classList.toggle('show');
+  if (banner.classList.contains('show')) {
+    const key = loadApiKey();
+    if (key) document.getElementById('apiKeyInput').value = key;
+    banner.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+// ── Upload Logic ──────────────────────────────
+const uploadArea = document.getElementById('uploadArea');
+const fileInput = document.getElementById('fileInput');
+
+uploadArea.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  uploadArea.classList.add('dragover');
+});
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+uploadArea.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadArea.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) handleFile(file);
+});
+fileInput.addEventListener('change', (e) => {
+  if (e.target.files[0]) handleFile(e.target.files[0]);
+});
+
+function handleFile(file) {
+  if (file.size > 10 * 1024 * 1024) {
+    showError('Image is too large. Please use an image under 10MB.');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    uploadedImageBase64 = e.target.result; // keep as full data URL
+    // Show preview
+    uploadArea.classList.add('has-file');
+    document.getElementById('uploadPlaceholder').style.display = 'none';
+
+    const existingImg = uploadArea.querySelector('img');
+    if (existingImg) existingImg.remove();
+
+    const img = document.createElement('img');
+    img.src = e.target.result;
+    uploadArea.appendChild(img);
+
+    const changeBtn = document.createElement('div');
+    changeBtn.className = 'change-image-btn';
+    changeBtn.textContent = 'Change image';
+    uploadArea.appendChild(changeBtn);
+
+    document.getElementById('step1Circle').textContent = '✓';
+    document.getElementById('step1Circle').classList.add('done');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Audience shortcuts ────────────────────────
+function setAudience(text) {
+  document.getElementById('audience').value = text;
+}
+
+// ── Build prompt ──────────────────────────────
+function buildPrompt() {
+  const name = document.getElementById('productName').value.trim();
+  const audience = document.getElementById('audience').value.trim();
+  const platform = document.getElementById('platform').value;
+  const ratio = document.getElementById('aspectRatio').value;
+  const style = document.getElementById('style').value;
+
+  let prompt = `A 10-second ${style} product advertisement video`;
+  if (name) prompt += ` for "${name}"`;
+  prompt += `. `;
+  prompt += `Formatted for ${platform}, ${ratio}. `;
+  if (audience) prompt += `Target audience: ${audience}. `;
+  prompt += `The video shows the product in an appealing, engaging way. `;
+  prompt += `Professional quality, smooth motion, vibrant and attractive visuals. `;
+  prompt += `No text overlays. Short, punchy, scroll-stopping content.`;
+
+  return prompt;
+}
+
+// ── Generate ──────────────────────────────────
+async function generate() {
+  if (isGenerating) return;
+
+  const apiKey = loadApiKey();
+  if (!apiKey) {
+    document.getElementById('setupBanner').classList.add('show');
+    document.getElementById('setupBanner').scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
+  if (!uploadedImageBase64) {
+    showError('Please upload a product image first (Step 1).');
+    return;
+  }
+  if (!document.getElementById('audience').value.trim()) {
+    showError('Please fill in who this video is for (Step 2).');
+    return;
+  }
+
+  isGenerating = true;
+  hideError();
+  hideResult();
+  setGenerating(true);
+  showStatus();
+
+  const prompt = buildPrompt();
+  setStatusMsg('Sending to AI...', 'Connecting to Replicate...', 10);
+
+  try {
+    // Submit to Replicate — using minimax/video-01 (text+image to video)
+    const body = {
+      version: null,
+      input: {
+        prompt: prompt,
+        image: uploadedImageBase64,  // reference image for the product
+        duration: 6,
+        resolution: "720p",
+        aspect_ratio: getAspectRatio(),
+      }
+    };
+
+    // Use minimax/video-01 model
+    const submitRes = await fetch('https://api.replicate.com/v1/models/minimax/video-01/predictions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'wait=5',
+      },
+      body: JSON.stringify({ input: body.input }),
+    });
+
+    if (!submitRes.ok) {
+      const errData = await submitRes.json().catch(() => ({}));
+      const msg = errData?.detail || errData?.error || `HTTP ${submitRes.status}`;
+      // Handle common errors helpfully
+      if (submitRes.status === 401) throw new Error('Invalid API key. Please check your Replicate token and try again.');
+      if (submitRes.status === 402) throw new Error('Your Replicate free credits ran out. Visit replicate.com to add credits (very cheap).');
+      if (submitRes.status === 422) throw new Error('The image format wasn\'t accepted. Try a different JPG or PNG image.');
+      throw new Error(msg);
+    }
+
+    const prediction = await submitRes.json();
+    const predictionId = prediction.id;
+
+    if (!predictionId) throw new Error('No prediction ID returned. Please try again.');
+
+    setStatusMsg('AI is working...', 'This takes about 60–90 seconds ☕', 25);
+
+    // Poll for result
+    const videoUrl = await pollPrediction(apiKey, predictionId);
+
+    // Success!
+    setStatusMsg('Done!', 'Your video is ready! 🎉', 100);
+    await sleep(600);
+
+    showResult(videoUrl);
+
+  } catch (err) {
+    showError(err.message);
+    hideStatus();
+  } finally {
+    isGenerating = false;
+    setGenerating(false);
+  }
+}
+
+function getAspectRatio() {
+  const val = document.getElementById('aspectRatio').value;
+  if (val.includes('9:16')) return '9:16';
+  if (val.includes('1:1')) return '1:1';
+  if (val.includes('16:9')) return '16:9';
+  return '9:16';
+}
+
+async function pollPrediction(apiKey, id) {
+  const MAX = 90; // max polls
+  const INTERVAL = 4000; // 4 sec
+
+  const statusMessages = [
+    'Warming up AI model...',
+    'Processing your product image...',
+    'Crafting video frames...',
+    'Rendering video...',
+    'Almost there...',
+  ];
+  let msgIndex = 0;
+
+  for (let i = 0; i < MAX; i++) {
+    await sleep(INTERVAL);
+
+    const res = await fetch(`https://api.replicate.com/v1/predictions/${id}`, {
+      headers: { 'Authorization': `Bearer ${apiKey}` },
+    });
+
+    if (!res.ok) throw new Error(`Polling failed: ${res.status}`);
+
+    const data = await res.json();
+    const progress = Math.min(25 + Math.round((i / MAX) * 65), 90);
+
+    // Cycle through friendly messages
+    if (i % 4 === 0 && msgIndex < statusMessages.length - 1) msgIndex++;
+    setStatusMsg('AI is working...', statusMessages[msgIndex], progress);
+
+    if (data.status === 'succeeded') {
+      const output = data.output;
+      // output can be a URL string or array
+      const url = Array.isArray(output) ? output[0] : output;
+      if (!url) throw new Error('Video was generated but no URL was returned. Please try again.');
+      return url;
+    }
+
+    if (data.status === 'failed' || data.status === 'canceled') {
+      const reason = data.error || 'Unknown error';
+      throw new Error(`Video generation failed: ${reason}`);
+    }
+    // status: "starting" | "processing" → keep polling
+  }
+
+  throw new Error('Timed out after 6 minutes. The AI servers might be busy — please try again in a moment.');
+}
+
+// ── UI Helpers ────────────────────────────────
+function setGenerating(on) {
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = on;
+  btn.innerHTML = on
+    ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 0.8s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Generating... please wait`
+    : `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg> Generate My Video — Free`;
+}
+
+function showStatus() {
+  document.getElementById('statusCard').classList.add('show');
+  document.getElementById('statusCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function hideStatus() {
+  document.getElementById('statusCard').classList.remove('show');
+}
+
+function setStatusMsg(title, msg, progress) {
+  document.getElementById('statusTitle').textContent = title;
+  document.getElementById('statusMsg').textContent = msg;
+  document.getElementById('progressFill').style.width = progress + '%';
+  document.getElementById('progressLabel').textContent = progress + '% complete';
+}
+
+function showResult(videoUrl) {
+  hideStatus();
+  const video = document.getElementById('outputVideo');
+  video.src = videoUrl;
+  document.getElementById('downloadBtn').href = videoUrl;
+  document.getElementById('downloadBtn').setAttribute('download', 'ugc-video-' + Date.now() + '.mp4');
+  document.getElementById('resultCard').classList.add('show');
+  document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth' });
+
+  document.getElementById('step3Circle').textContent = '✓';
+  document.getElementById('step3Circle').classList.add('done');
+}
+
+function hideResult() {
+  document.getElementById('resultCard').classList.remove('show');
+}
+
+function showError(msg) {
+  document.getElementById('errorMsg').textContent = msg;
+  document.getElementById('errorBox').classList.add('show');
+  document.getElementById('errorBox').scrollIntoView({ behavior: 'smooth' });
+}
+
+function hideError() {
+  document.getElementById('errorBox').classList.remove('show');
+}
+
+function resetAll() {
+  uploadedImageBase64 = null;
+  document.getElementById('fileInput').value = '';
+  uploadArea.classList.remove('has-file');
+  document.getElementById('uploadPlaceholder').style.display = 'block';
+  const img = uploadArea.querySelector('img');
+  if (img) img.remove();
+  const cb = uploadArea.querySelector('.change-image-btn');
+  if (cb) cb.remove();
+  document.getElementById('audience').value = '';
+  document.getElementById('productName').value = '';
+  hideResult();
+  hideError();
+  hideStatus();
+  ['step1Circle','step2Circle','step3Circle'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('done');
+    el.textContent = id.replace('step','').replace('Circle','');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e2235;color:white;padding:12px 24px;border-radius:12px;font-size:14px;font-family:Nunito,sans-serif;font-weight:700;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.2);';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── Init ──────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const key = loadApiKey();
+  if (key) {
+    updateKeyStatus(true);
+  } else {
+    document.getElementById('setupBanner').classList.add('show');
+  }
+});
+</script>
+</body>
+</html>
